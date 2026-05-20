@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>兴趣爱好交流小站</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎯 兴趣爱好交流小站</h1>
+      <p>选择你喜欢的领域，和同好一起交流</p>
+    </header>
+
+    <div class="hobby-list">
+      <div class="hobby-card" onclick="goHobby('摄影')">📷 摄影</div>
+      <div class="hobby-card" onclick="goHobby('绘画')">🎨 绘画</div>
+      <div class="hobby-card" onclick="goHobby('编程')">💻 编程</div>
+      <div class="hobby-card" onclick="goHobby('健身')">🏋️ 健身</div>
+      <div class="hobby-card" onclick="goHobby('读书')">📖 读书</div>
+      <div class="hobby-card" onclick="goHobby('音乐')">🎵 音乐</div>
+    </div>
+  </div>
+
+  <script>
+    function goHobby(name) {
+      localStorage.setItem('currentHobby', name);
+      window.location.href = 'hobby.html';
+    }
+  </script>
+</body>
+</html>
