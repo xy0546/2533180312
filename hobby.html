@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>兴趣详情</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 id="hobby-title">加载中...</h1>
+      <a href="index.html" class="back-btn">← 返回主页</a>
+    </header>
+
+    <div class="post-area">
+      <h3>📝 发布我的作品</h3>
+      <input type="text" id="title" placeholder="输入标题"><br>
+      <textarea id="content" placeholder="输入文字介绍"></textarea><br>
+      <input type="file" id="imageUpload" accept="image/*"><br>
+      <button onclick="postContent()">发布</button>
+    </div>
+
+    <div id="posts" class="posts-area"></div>
+
+    <div class="comment-section">
+      <h3>💬 评论区</h3>
+      <input type="text" id="commentInput" placeholder="说点什么...">
+      <button onclick="addComment()">发送评论</button>
+      <div id="commentList"></div>
+    </div>
+  </div>
+
+  <script>
+    const hobby = localStorage.getItem('currentHobby') || '未选择';
+    document.getElementById('hobby-title').innerText = hobby + " 交流区";
+
+    function postContent() {
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+      const file = document.getElementById('imageUpload').files[0];
+      if (!title || !content) return alert('请填写完整');
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = e.target.result;
+        const list = JSON.parse(localStorage.getItem(hobby+'_posts')) || [];
+        list.unshift({ title, content, img, time: new Date().toLocaleString() });
+        localStorage.setItem(hobby+'_posts', JSON.stringify(list));
+        renderPosts();
+        document.getElementById('title').value = '';
+        document.getElementById('content').value = '';
+      };
+      if (file) reader.readAsDataURL(file);
+      else {
+        const list = JSON.parse(localStorage.getItem(hobby+'_posts')) || [];
+        list.unshift({ title, content, img: '', time: new Date().toLocaleString() });
+        localStorage.setItem(hobby+'_posts', JSON.stringify(list));
+        renderPosts();
+      }
+    }
+
+    function renderPosts() {
+      const posts = JSON.parse(localStorage.getItem(hobby+'_posts')) || [];
+      const dom = document.getElementById('posts');
+      dom.innerHTML = posts.map(p => `
+        <div class="post-card">
+          <h4>${p.title}</h4>
+          <p>${p.content}</p>
+          ${p.img ? '<img src="'+p.img+'" style="max-width:100%;border-radius:8px">' : ''}
+          <div class="time">${p.time}</div>
+        </div>
+      `).join('');
+    }
+
+    function addComment() {
+      const text = document.getElementById('commentInput').value;
+      if (!text) return;
+      const comments = JSON.parse(localStorage.getItem(hobby+'_comments')) || [];
+      comments.unshift({ text, time: new Date().toLocaleString() });
+      localStorage.setItem(hobby+'_comments', JSON.stringify(comments));
+      renderComments();
+      document.getElementById('commentInput').value = '';
+    }
+
+    function renderComments() {
+      const comments = JSON.parse(localStorage.getItem(hobby+'_comments')) || [];
+      const dom = document.getElementById('commentList');
+      dom.innerHTML = comments.map(c => `
+        <div class="comment">
+          <span>${c.text}</span>
+          <div class="time">${c.time}</div>
+        </div>
+      `).join('');
+    }
+
+    renderPosts();
+    renderComments();
+  </script>
+</body>
+</html>
